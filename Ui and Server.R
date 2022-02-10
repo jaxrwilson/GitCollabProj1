@@ -1,16 +1,21 @@
 library(shiny)
 
-ui<- fluidPage(
-  radioButtons(inputId="radio", 
-               label = h3("What is your favorite cheese?"),
-               choices = list("Kraft Singles" = 1, "Mozzarella" = 2, "I'm lactose intolerant" = 3),
-               selected = 1),
-  
-  hr(),
-  fluidRow(column(3, verbatimTextOutput("value")))
-)
-server <- function(input, output)
-  output$value <- renderPrint({ input$radio })
+library("fpp3")
+data(tourism)
 
+ui<- fluidPage(
+  selectInput(inputId = "Selected_Region", label = "Region",choices = unique(tourism$Region)
+),
+plotOutput("ts_plot"))
+
+
+server <- function(input, output){
+  output$ts_plot <- renderPlot({
+    Region1<-subset(tourism, Region==input$Selected_Region)
+    autoplot(Region1)
+  })
+}
 
 shinyApp(ui, server)
+
+
